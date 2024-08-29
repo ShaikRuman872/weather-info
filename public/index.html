@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: linear-gradient(to bottom, skyblue,skyblue,white);
+            background-size: cover;
+        }
+        #weather {
+            margin-top: 20px;
+        }
+        h1{
+            color: #ffffff;
+        }
+        button {
+            height: 6vh;
+            width: 9vw;
+            border-radius: 15px;
+            border-width: 0px;
+            background-color: yellow;
+            margin-top: 20px;
+            font-size: 15px;
+        }
+        .input-element{
+            height: 5vh;
+        }
+        .attribute{
+            margin: 20px;
+        }
+        .icon{
+            height: 4vh;
+            width: 3vw;
+            margin-right: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Information</h1>
+    <input type="text" id="city" placeholder="Enter city name" class="input-element">
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weather"></div>
+    <script>
+        async function getWeather() {    
+            const city = document.getElementById('city').value;    
+            if (city) {
+                try {        
+                    const response = await fetch(`/weather?city=${city}`);    
+                    const data = await response.json();
+   
+                    if (data.error) {
+                        document.getElementById('weather').innerText = `Error: ${data.error}`;
+                    } else {
+                        document.getElementById('weather').innerHTML = `
+                            <div class="attribute"><strong> <img src="https://media.istockphoto.com/id/1493681761/vector/orange-colored-map-location-pin.jpg?s=612x612&w=0&k=20&c=pzksh7tO6k6mXns2YUUuDxA6cVFfE1mQPoNHqSHPbfI=" class = "icon" /> City:</strong> ${data.location.name}, ${data.location.country}</div>
+                            <div class="attribute"><strong> <img src="https://cdn-icons-png.flaticon.com/512/3534/3534501.png" class = "icon" /> Temperature:</strong> ${data.current.temperature}°C</div>
+                            <div class="attribute"><strong> <img src= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSng5iGr1TB2UmRnLdjzCBVlhVuJ2nPzi1y9A&s" class = "icon" /> Weather:</strong> ${data.current.weather_descriptions[0]}</div>
+                            <div class="attribute"><strong> <img src="https://www.shutterstock.com/image-vector/humidity-vector-icon-clipart-image-260nw-1131698993.jpg" class = "icon" />Humidity:</strong> ${data.current.humidity}%</div>
+                            <div class="attribute"><strong> <img src= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTchyBdFLbdbNhiblh7EgBIgCUJdF0x3jImww&s" class = "icon" /> Wind Speed:</strong> ${data.current.wind_speed} km/h</div>
+                        `;
+                        document.getElementById('weather').classList.remove("error")
+                    }
+                } catch (error) {    
+                    document.getElementById('weather').innerText = 'Error fetching weather data';
+                    document.getElementById('weather').classList.remove("error")    
+                }
+            } else {
+                document.getElementById('weather').innerText =  "Please enter a city name" ;
+                document.getElementById('weather').classList.add("error")
+            }
+        }
+    </script>
+</body>
+</html>
